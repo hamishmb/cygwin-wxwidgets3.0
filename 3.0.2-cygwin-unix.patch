@@ -1,0 +1,42 @@
+--- origsrc/wxPython-src-3.0.2.0/build/aclocal/bakefile.m4	2013-12-16 07:42:29.000000000 -0600
++++ src/wxPython-src-3.0.2.0/build/aclocal/bakefile.m4	2015-01-04 14:53:55.788740800 -0600
+@@ -639,7 +639,7 @@ AC_DEFUN([AC_BAKEFILE_CHECK_BASIC_STUFF]
+ 
+     LDFLAGS_GUI=
+     case ${BAKEFILE_HOST} in
+-        *-*-cygwin* | *-*-mingw32* )
++        *-*-mingw32* )
+         LDFLAGS_GUI="-mwindows"
+     esac
+     AC_SUBST(LDFLAGS_GUI)
+--- origsrc/wxPython-src-3.0.2.0/src/unix/stdpaths.cpp	2013-12-16 07:42:31.000000000 -0600
++++ src/wxPython-src-3.0.2.0/src/unix/stdpaths.cpp	2015-01-04 14:54:33.743607000 -0600
+@@ -37,7 +37,7 @@
+ #include "wx/log.h"
+ #include "wx/textfile.h"
+ 
+-#if defined( __LINUX__ ) || defined( __VMS )
++#if defined( __LINUX__ ) || defined( __VMS ) || defined ( __CYGWIN__ )
+     #include <unistd.h>
+ #endif
+ 
+@@ -117,7 +117,7 @@ wxString wxStandardPaths::GetExecutableP
+ 
+ wxString wxStandardPaths::GetExecutablePath() const
+ {
+-#ifdef __LINUX__
++#if defined ( __LINUX__ ) || defined ( __CYGWIN__ )
+     wxString exeStr;
+ 
+     char buf[4096];
+--- origsrc/wxPython-src-3.0.2.0/src/unix/utilsunx.cpp	2014-06-24 16:43:01.000000000 -0500
++++ src/wxPython-src-3.0.2.0/src/unix/utilsunx.cpp	2015-01-04 14:56:24.894800900 -0600
+@@ -1172,7 +1172,7 @@ unsigned long wxGetProcessId()
+ 
+ wxMemorySize wxGetFreeMemory()
+ {
+-#if defined(__LINUX__)
++#if defined(__LINUX__) || defined(__CYGWIN__)
+     // get it from /proc/meminfo
+     FILE *fp = fopen("/proc/meminfo", "r");
+     if ( fp )

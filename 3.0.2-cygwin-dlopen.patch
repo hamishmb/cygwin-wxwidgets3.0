@@ -1,0 +1,46 @@
+--- origsrc/wxPython-src-3.0.2.0/src/common/dynlib.cpp	2013-12-16 07:42:30.000000000 -0600
++++ src/wxPython-src-3.0.2.0/src/common/dynlib.cpp	2015-01-04 15:00:38.988043900 -0600
+@@ -165,7 +165,7 @@ void *wxDynamicLibrary::GetSymbol(const
+ wxString wxDynamicLibrary::GetDllExt(wxDynamicLibraryCategory cat)
+ {
+     wxUnusedVar(cat);
+-#if defined(__WINDOWS__) || defined(__WXPM__) || defined(__EMX__)
++#if defined(__WINDOWS__) || defined(__WXPM__) || defined(__EMX__) || defined(__CYGWIN__)
+     return ".dll";
+ #elif defined(__HPUX__)
+     return ".sl";
+@@ -197,7 +197,11 @@ wxDynamicLibrary::CanonicalizeName(const
+     {
+         case wxDL_LIBRARY:
+             // Library names should start with "lib" under Unix.
++#ifdef __CYGWIN__
++            nameCanonic = "cyg";
++#else
+             nameCanonic = "lib";
++#endif
+             break;
+         case wxDL_MODULE:
+             // Module names are arbitrary and should have no prefix added.
+--- origsrc/wxPython-src-3.0.2.0/src/unix/dlunix.cpp	2013-12-31 15:47:57.000000000 -0600
++++ src/wxPython-src-3.0.2.0/src/unix/dlunix.cpp	2015-01-04 14:58:20.943403200 -0600
+@@ -184,7 +184,11 @@ public:
+         details->m_length = (char *)end - (char *)start;
+ 
+         // try to extract the library version from its name
++#ifdef __CYGWIN__
++        const size_t posExt = path.rfind(wxT(".dll"));
++#else
+         const size_t posExt = path.rfind(wxT(".so"));
++#endif
+         if ( posExt != wxString::npos )
+         {
+             if ( path.c_str()[posExt + 3] == wxT('.') )
+@@ -213,7 +217,7 @@ wxDynamicLibraryDetailsArray wxDynamicLi
+ {
+     wxDynamicLibraryDetailsArray dlls;
+ 
+-#ifdef __LINUX__
++#if defined(__LINUX__) || defined(__CYGWIN__)
+     // examine /proc/self/maps to find out what is loaded in our address space
+     wxFFile file(wxT("/proc/self/maps"));
+     if ( file.IsOpened() )

@@ -1,0 +1,72 @@
+--- origsrc/wxPython-src-3.0.2.0/wxPython/config.py	2014-10-13 17:37:51.000000000 -0500
++++ src/wxPython-src-3.0.2.0/wxPython/config.py	2015-01-04 18:55:34.003693200 -0600
+@@ -604,10 +604,7 @@ def findLib(name, libdirs):
+         # installed with a standard prefix and wx-config does not
+         # output these libdirs because they are already searched by
+         # default by the compiler and linker.
+-        if lflags[0][:2] != '-L':  
+-            dirs = libdirs + ['/usr/lib', '/usr/local/lib']
+-        else:
+-            dirs = libdirs
++        dirs = libdirs + ['/usr/lib']
+         name = 'lib'+name
+     else:
+         dirs = libdirs[:]
+@@ -1098,27 +1095,33 @@ elif os.name == 'posix' or COMPILER == '
+         if WXPORT == 'gtk':
+             WXPLAT = '__WXGTK__'
+             portcfg = os.popen('gtk-config --cflags', 'r').read()[:-1]
++            portlfg = os.popen('gtk-config --libs', 'r').read()[:-1]
+             BUILD_BASE = BUILD_BASE + '-' + WXPORT
+         elif WXPORT == 'gtk2':
+             WXPLAT = '__WXGTK__'
+             GENDIR = 'gtk' # no code differences so use the same generated sources
+             portcfg = os.popen('pkg-config gtk+-2.0 --cflags', 'r').read()[:-1]
++            portlfg = os.popen('pkg-config gtk+-2.0 --libs', 'r').read()[:-1]
+         elif WXPORT == 'gtk3':
+             WXPLAT = '__WXGTK__'
+             GENDIR = 'gtk' # no code differences so use the same generated sources
+             portcfg = os.popen('pkg-config gtk+-3.0 --cflags', 'r').read()[:-1]
++            portlfg = os.popen('pkg-config gtk+-3.0 --libs', 'r').read()[:-1]
+         elif WXPORT == 'x11':
+             WXPLAT = '__WXX11__'
+             portcfg = ''
++            portlfg = '-lXext -lX11'
+             BUILD_BASE = BUILD_BASE + '-' + WXPORT
+         elif WXPORT == 'msw':
+             WXPLAT = '__WXMSW__'
+             GENDIR = 'msw'
+             portcfg = ''
++            portlfg = ''
+         else:
+             raise SystemExit, "Unknown WXPORT value: " + WXPORT
+ 
+         cflags += portcfg.split()
++        lflags += portlfg.split()
+ 
+         # Some distros (e.g. Mandrake) put libGLU in /usr/X11R6/lib, but
+         # wx-config doesn't output that for some reason.  For now, just
+@@ -1175,7 +1178,7 @@ MONOLITHIC=%d
+ try: 
+     from build_options import *
+ except:
+-    build_options_file = os.path.join(os.path.dirname(__file__), "build_options.py")
++    build_options_file = os.path.join('.', "build_options.py")
+     if not os.path.exists(build_options_file):
+         try:
+             myfile = open(build_options_file, "w")
+--- origsrc/wxPython-src-3.0.2.0/wxPython/setup.py	2013-12-23 16:40:19.000000000 -0600
++++ src/wxPython-src-3.0.2.0/wxPython/setup.py	2015-01-04 15:05:25.357743200 -0600
+@@ -666,10 +666,8 @@ if BUILD_GLCANVAS:
+     gl_libs = []
+     gl_libdirs = libdirs[:]
+     if os.name == 'posix':
+-        gl_config = os.popen(WX_CONFIG + ' --libs', 'r').read()[:-1] + \
+-                    os.popen(WX_CONFIG + ' --libs gl', 'r').read()[:-1]
+-        gl_lflags = gl_config.split()
+-        gl_lflags = adjustLFLAGS(gl_lflags, gl_libdirs, gl_libs)
++        gl_libs = libs + makeLibName('gl') + ['GLU', 'GL']
++        gl_lflags = lflags
+     else:
+         gl_libs = libs + ['opengl32', 'glu32'] + makeLibName('gl')
+         gl_lflags = lflags

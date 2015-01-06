@@ -1,0 +1,189 @@
+inherit distutils
+
+NAME="wxWidgets3.0"
+VERSION=3.0.2.0
+RELEASE=1
+CATEGORY="Libs"
+SUMMARY="wxWidgets C++ application framework"
+DESCRIPTION="wxWidgets is a set of libraries that allows C++ applications to
+compile and run on several different types of computer, with minimal source
+code changes. There is one library per supported GUI. As well as providing a
+common API for GUI functionality, it provides functionality for accessing some
+commonly-used operating system facilities, from copying and deleting files to
+socket and thread support."
+HOMEPAGE="http://wxwidgets.org/"
+SRC_URI="mirror://sourceforge/wxpython/wxPython-src-${VERSION}.tar.bz2"
+SRC_DIR="wxPython-src-${VERSION}"
+PATCH_URI="
+	mirror://portage/x11-libs/wxGTK/files/wxGTK-3.0.0.0-collision.patch
+	mirror://portage/dev-python/wxpython/files/wxpython-3.0.0.0-wxversion-scripts.patch
+	mirror://portage/dev-python/wxpython/files/wxpython-2.8.11-drop-editra.patch
+	3.0.2-cygwin-auto-import.patch
+	3.0.2-cygwin-dlopen.patch
+	3.0.2-cygwin-unix.patch
+	3.0.2-python-build.patch
+"
+
+DISTCLEANFILES="wxPython/build_options.py"
+
+slot=${PV_MAJ_MIN}
+
+PKG_NAMES="libwx_baseu3.0_0 libwx_gtk2u3.0_0 libwx_gtk2u3.0-devel libwx_gtk2u3.0-doc"
+# nothing using wxPython has been ported yet, too early to switch defaults
+PKG_NAMES+=" python-wx3.0" # python-wx-tools python-wxversion"
+libwx_baseu3_0_0_SUMMARY="${SUMMARY} (base unicode runtime)"
+libwx_baseu3_0_0_CONTENTS="--exclude=html usr/bin/cygwx_baseu*-3.0-0.dll usr/share/doc/ usr/share/locale/"
+libwx_gtk2u3_0_0_SUMMARY="${SUMMARY} (GTK+ unicode runtime)"
+libwx_gtk2u3_0_0_CONTENTS="usr/bin/cygwx_gtk2u*-3.0-0.dll"
+libwx_gtk2u3_0_devel_SUMMARY="${SUMMARY} (development)"
+libwx_gtk2u3_0_devel_REQUIRES="libexpat1-devel libGL-devel libglib2.0-devel libgtk2.0-devel libiconv libX11-devel zlib-devel"
+libwx_gtk2u3_0_devel_CONTENTS="--exclude=wxPython usr/bin/wx-config-3.0
+	usr/bin/wxrc-3.0.exe usr/include/wx-3.0/ usr/lib/libwx* usr/lib/wx/
+	usr/share/aclocal/ usr/share/bakefile/"
+libwx_gtk2u3_0_doc_SUMMARY="${SUMMARY} (documentation)"
+libwx_gtk2u3_0_doc_CONTENTS="usr/share/doc/${NAME}/html/"
+python_wx3_0_SUMMARY="${SUMMARY} (Python bindings)"
+python_wx3_0_CONTENTS="usr/include/wx-${slot}/wx/wxPython/ ${PYTHON_SITELIB#/}/wx-${slot}-gtk2/"
+python_wx_tools_SUMMARY="wxPython development tools"
+python_wx_tools_CONTENTS="etc/ usr/bin/helpviewer usr/bin/img2*
+	usr/bin/py* usr/bin/xrced usr/share/applications/ usr/share/icons/"
+python_wxversion_SUMMARY="wxPython version selection module"
+python_wxversion_CONTENTS="${PYTHON_SITELIB#/}/wx.pth
+	${PYTHON_SITELIB#/}/wxPython_common*.egg-info
+	${PYTHON_SITELIB#/}/wxversion.*"
+PKG_IGNORE=${python_wx_tools_CONTENTS}" "${python_wxversion_CONTENTS}
+
+DIFF_EXCLUDES="configure swigver.h wx.pth *_wrap.cpp"
+
+CFLAGS+=" -fno-strict-aliasing"
+CXXFLAGS+=" -fno-strict-aliasing"
+MAKEOPTS+=" -j1"
+
+CYGPORT_USE_UNSTABLE_API=1
+src_unpack_hook() {
+	ln -sf wxPython b
+}
+
+src_patch_hook() {
+	rm -f b
+}
+
+src_compile() {
+#	if false; then #############################
+
+	local myconf
+
+	cd ${S}
+	NO_ACLOCAL=1 NO_LIBTOOLIZE=1 NO_AUTOHEADER=1 NO_AUTOMAKE=1 \
+	cygautoreconf
+
+	cd ${S}/locale
+	rm -f *.mo
+	cygmake allmo
+
+	cd ${B}
+
+	# standalone wx_base
+	cygconf \
+		--enable-compat26 \
+		--enable-optimise \
+		--enable-shared \
+		--enable-unicode \
+		--disable-gui \
+		--disable-rpath \
+		--with-expat \
+		--with-libiconv \
+		--with-zlib
+
+	rm -f configarg.cache
+
+	# gnomevfs: Gentoo bug 203389
+	cygconf \
+		--enable-optimise \
+		--enable-shared \
+		--disable-gtktest \
+		--disable-rpath \
+		--disable-sdltest \
+		--with-expat \
+		--with-gtk=2 \
+		--without-gnomeprint --without-gnomevfs \
+		--with-libpng \
+		--with-libjpeg \
+		--with-libiconv \
+		--with-libmspack \
+		--with-libnotify \
+		--with-libtiff \
+		--with-libxpm \
+		--with-opengl \
+		--with-sdl \
+		--with-zlib
+
+	cygmake
+
+#	fi #############################
+
+	mkdir -p ${B}/wxPython
+	lndirs ${S}/wxPython ${B}/wxPython
+	cd ${B}/wxPython
+
+	export WXWIN=${S}
+
+	${PYTHON} setup.py build \
+		WXPORT=gtk2 \
+		WX_CONFIG=${B}/lib/wx/config/inplace-gtk2-unicode-${slot} \
+		SYS_WX_CONFIG=/usr/lib/wx/config/gtk2-unicode-${slot}
+}
+
+src_test() {
+	cd ${B}/tests
+	cygmake
+	PATH="${B}/lib:$PATH" ./test
+	PATH="${B}/lib:$PATH" ./test_gui
+}
+
+src_install() {
+#	if false; then #############################
+
+	cd ${B}/wxPython
+
+	export WXWIN=${S}
+
+	distutils_install \
+		WXPORT=gtk2 \
+		WX_CONFIG=${B}/lib/wx/config/gtk2-unicode-${slot} \
+		SYS_WX_CONFIG=/usr/lib/wx/config/gtk2-unicode-${slot}
+
+	for i in 16 32
+	do
+		insinto /usr/share/icons/hicolor/${i}x${i}/apps
+		newins ${S}/wxPython/wx/py/PyCrust_${i}.png PyCrust.png
+		newins ${S}/wxPython/wx/tools/XRCed/XRCed_${i}.png XRCed.png
+	done
+	make_desktop_entry pycrust   PyCrust   PyCrust "Development;GTK"
+	make_desktop_entry xrced     XRCed     XRCed   "Development;GTK"
+
+#	fi #############################
+
+	cd ${B}
+	cyginstall
+
+	cp -f lib/lib* ${D}/usr/lib/
+	cp -fr lib/wx/ ${D}/usr/lib/
+	rm -f ${D}/usr/lib/wx/config/inplace-*
+
+	mv ${D}/usr/lib/*.dll ${D}/usr/bin
+	mv ${D}/usr/bin/wxrc-${slot}{,.exe}
+
+	rm -f ${D}/usr/bin/wx-config-${slot}
+	dosym ../lib/wx/config/gtk2-unicode-${slot} /usr/bin/wx-config-${slot}
+
+	insinto /usr/share/aclocal
+	newins ${S}/wxwin.m4 wxwin-${slot}.m4
+
+	cd ${S}/docs
+	dodoc changes.txt gpl.txt lgpl.txt licendoc.txt preamble.txt todo.txt
+
+	cp -r ${S}/docs/doxygen/out/html/ ${D}/usr/share/doc/${NAME}/
+
+	rm -f ${D}/usr/share/locale/*/LC_MESSAGES/wxmsw*.mo
+}
