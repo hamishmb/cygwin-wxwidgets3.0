@@ -36,7 +36,7 @@ libwx_baseu3_0_0_CONTENTS="--exclude=html usr/bin/cygwx_baseu*-3.0-0.dll usr/sha
 libwx_gtk2u3_0_0_SUMMARY="${SUMMARY} (GTK+ unicode runtime)"
 libwx_gtk2u3_0_0_CONTENTS="usr/bin/cygwx_gtk2u*-3.0-0.dll"
 libwx_gtk2u3_0_devel_SUMMARY="${SUMMARY} (development)"
-libwx_gtk2u3_0_devel_REQUIRES="libexpat1-devel libGL-devel libglib2.0-devel libgtk2.0-devel libiconv libX11-devel zlib-devel"
+libwx_gtk2u3_0_devel_REQUIRES="libexpat-devel libGL-devel libglib2.0-devel libgtk2.0-devel libiconv libX11-devel zlib-devel"
 libwx_gtk2u3_0_devel_CONTENTS="--exclude=wxPython usr/bin/wx-config-3.0
 	usr/bin/wxrc-3.0.exe usr/include/wx-3.0/ usr/lib/libwx* usr/lib/wx/
 	usr/share/aclocal/ usr/share/bakefile/"
