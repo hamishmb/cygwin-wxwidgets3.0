@@ -2,7 +2,7 @@ inherit distutils
 
 NAME="wxWidgets3.0"
 VERSION=3.0.2.0
-RELEASE=1
+RELEASE=2
 CATEGORY="Libs"
 SUMMARY="wxWidgets C++ application framework"
 DESCRIPTION="wxWidgets is a set of libraries that allows C++ applications to
@@ -15,9 +15,16 @@ HOMEPAGE="http://wxwidgets.org/"
 SRC_URI="mirror://sourceforge/wxpython/wxPython-src-${VERSION}.tar.bz2"
 SRC_DIR="wxPython-src-${VERSION}"
 PATCH_URI="
+	http://pkgs.fedoraproject.org/cgit/rpms/wxGTK3.git/plain/wxGTK3-3.0.2-abicheck.patch
+	http://pkgs.fedoraproject.org/cgit/rpms/wxGTK3.git/plain/wxGTK3-3.0.2-upstreamfixes.patch
+	http://pkgs.fedoraproject.org/cgit/rpms/wxGTK3.git/plain/wxGTK3-3.0.2-spibuttfix.patch
+	http://pkgs.fedoraproject.org/cgit/rpms/wxGTK3.git/plain/wxGTK3-3.0.2-checkradio.patch
+	http://pkgs.fedoraproject.org/cgit/rpms/wxPython.git/plain/fix-editra-removal.patch
+	http://pkgs.fedoraproject.org/cgit/rpms/wxPython.git/plain/wxPython-3.0.0.0-format.patch
+	http://pkgs.fedoraproject.org/cgit/rpms/wxPython.git/plain/wxPython-3.0.2.0-getxwindowcrash.patch
+	http://pkgs.fedoraproject.org/cgit/rpms/wxPython.git/plain/wxPython-3.0.2.0-plot.patch
+	http://pkgs.fedoraproject.org/cgit/rpms/wxPython.git/plain/wxPython-3.0.2.0-listctrl-mixin-edit.patch
 	mirror://portage/x11-libs/wxGTK/files/wxGTK-3.0.0.0-collision.patch
-	mirror://portage/dev-python/wxpython/files/wxpython-3.0.0.0-wxversion-scripts.patch
-	mirror://portage/dev-python/wxpython/files/wxpython-2.8.11-drop-editra.patch
 	3.0.2-cygwin-auto-import.patch
 	3.0.2-cygwin-dlopen.patch
 	3.0.2-cygwin-unix.patch
@@ -69,8 +76,6 @@ src_patch_hook() {
 }
 
 src_compile() {
-#	if false; then #############################
-
 	local myconf
 
 	cd ${S}
@@ -120,8 +125,6 @@ src_compile() {
 
 	cygmake
 
-#	fi #############################
-
 	mkdir -p ${B}/wxPython
 	lndirs ${S}/wxPython ${B}/wxPython
 	cd ${B}/wxPython
@@ -142,8 +145,6 @@ src_test() {
 }
 
 src_install() {
-#	if false; then #############################
-
 	cd ${B}/wxPython
 
 	export WXWIN=${S}
@@ -161,8 +162,6 @@ src_install() {
 	done
 	make_desktop_entry pycrust   PyCrust   PyCrust "Development;GTK"
 	make_desktop_entry xrced     XRCed     XRCed   "Development;GTK"
-
-#	fi #############################
 
 	cd ${B}
 	cyginstall
