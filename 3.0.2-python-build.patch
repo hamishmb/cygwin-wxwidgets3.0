@@ -27,7 +27,7 @@
              WXPLAT = '__WXGTK__'
              GENDIR = 'gtk' # no code differences so use the same generated sources
              portcfg = os.popen('pkg-config gtk+-3.0 --cflags', 'r').read()[:-1]
-+            portlfg = os.popen('pkg-config gtk+-3.0 --libs', 'r').read()[:-1]
++            portlfg = os.popen('pkg-config gtk+-3.0 x11 --libs', 'r').read()[:-1]
          elif WXPORT == 'x11':
              WXPLAT = '__WXX11__'
              portcfg = ''

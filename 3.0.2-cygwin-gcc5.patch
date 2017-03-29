@@ -1,0 +1,21 @@
+Sometimes when called from wxLocale::GetSystemEncodingName, 'ascii' gets
+clobbered by the subsequent wxStringInternalBuffer ctor.  CoW issues?
+
+--- origsrc/wxPython-src-3.0.2.0/src/common/string.cpp	2014-10-08 11:51:06.000000000 -0500
++++ src/wxPython-src-3.0.2.0/src/common/string.cpp	2017-03-29 01:20:26.947989900 -0500
+@@ -1168,11 +1168,13 @@ int wxString::CmpNoCase(const wxString&
+ 
+ #if wxUSE_UNICODE
+ 
+-wxString wxString::FromAscii(const char *ascii, size_t len)
++wxString wxString::FromAscii(const char *orig, size_t len)
+ {
+-    if (!ascii || len == 0)
++    if (!orig || len == 0)
+        return wxEmptyString;
+ 
++    char *ascii = strndupa (orig, len);
++
+     wxString res;
+ 
+     {
