@@ -258,7 +258,7 @@ src_install() {
 	make_desktop_entry pyalacarte PyAlaCarte  PyCrust "Development;GTK"
 	make_desktop_entry pyalamode  PyAlaMode   PyCrust "Development;GTK"
 	make_desktop_entry pycrust    PyCrust     PyCrust "Development;GTK"
-	make_desktop_entry pyshell    PyCrust     PyCrust "Development;GTK"
+	make_desktop_entry pyshell    PyShell     PyCrust "Development;GTK"
 	make_desktop_entry xrced      XRCed       XRCed   "Development;GTK"
 
 	cd ${B}/base
