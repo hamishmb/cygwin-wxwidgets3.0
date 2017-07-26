@@ -1,0 +1,21 @@
+--- origsrc/wxWidgets-3.0.3/configure.in	2017-04-29 07:00:38.000000000 -0500
++++ src/wxWidgets-3.0.3/configure.in	2017-07-25 23:20:07.158863100 -0500
+@@ -2673,7 +2673,6 @@ if test "$wxUSE_LIBTIFF" != "no" ; then
+             ac_configure_args="$ac_configure_args --disable-jbig"
+         fi
+ 
+-        AC_CONFIG_SUBDIRS([src/tiff])
+     fi
+ fi
+ 
+@@ -2717,10 +2716,6 @@ if test "$wxUSE_EXPAT" != "no"; then
+             wxUSE_EXPAT=sys
+         fi
+     fi
+-    if test "$wxUSE_EXPAT" = "builtin" ; then
+-        dnl Expat needs this:
+-        AC_CONFIG_SUBDIRS([src/expat])
+-    fi
+ fi
+ 
+ 

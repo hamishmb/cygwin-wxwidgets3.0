@@ -1,8 +1,6 @@
-inherit python2-distutils
-
 NAME="wxWidgets3.0"
-VERSION=3.0.2.0
-RELEASE=3
+VERSION=3.0.3
+RELEASE=1
 CATEGORY="Libs"
 SUMMARY="wxWidgets C++ application framework"
 DESCRIPTION="wxWidgets is a set of libraries that allows C++ applications to
@@ -12,53 +10,24 @@ common API for GUI functionality, it provides functionality for accessing some
 commonly-used operating system facilities, from copying and deleting files to
 socket and thread support."
 HOMEPAGE="http://wxwidgets.org/"
-SRC_URI="mirror://sourceforge/wxpython/wxPython-src-${VERSION}.tar.bz2"
-SRC_DIR="wxPython-src-${VERSION}"
+SRC_URI="https://github.com/wxWidgets/wxWidgets/releases/download/v${VERSION}/wxWidgets-${VERSION}.tar.bz2"
+SRC_DIR="wxWidgets-${VERSION}"
 PATCH_URI="
-	http://pkgs.fedoraproject.org/cgit/rpms/wxGTK3.git/plain/wxGTK3-3.0.2-abicheck.patch
-	http://pkgs.fedoraproject.org/cgit/rpms/wxGTK3.git/plain/wxGTK3-3.0.2-upstreamfixes.patch
-	http://pkgs.fedoraproject.org/cgit/rpms/wxGTK3.git/plain/wxGTK3-3.0.2-spibuttfix.patch
-	http://pkgs.fedoraproject.org/cgit/rpms/wxGTK3.git/plain/wxGTK3-3.0.2-checkradio.patch
-	http://pkgs.fedoraproject.org/cgit/rpms/wxGTK3.git/plain/wxGTK3-3.0.2-getbestsize.patch
-	http://pkgs.fedoraproject.org/cgit/rpms/wxGTK3.git/plain/wxGTK3-3.0.2-media-docs.patch?h=f25
-	http://pkgs.fedoraproject.org/cgit/rpms/wxGTK3.git/plain/wxGTK3-3.0.2-size-alloc-fix.patch
-	http://pkgs.fedoraproject.org/cgit/rpms/wxGTK3.git/plain/wxGTK3-3.0.2-font-enumerator-stop.patch
-	http://pkgs.fedoraproject.org/cgit/rpms/wxGTK3.git/plain/wxGTK3-3.0.2-init-from-font.patch
-	http://pkgs.fedoraproject.org/cgit/rpms/wxGTK3.git/plain/wxGTK3-3.0.2-gtk-show-uri.patch
-	http://pkgs.fedoraproject.org/cgit/rpms/wxGTK3.git/plain/wxGTK3-3.0.2-gtk-show-uri1.patch
-	http://pkgs.fedoraproject.org/cgit/rpms/wxGTK3.git/plain/wxGTK3-3.0.2-draw-elliptic-arc-crash.patch
-	http://pkgs.fedoraproject.org/cgit/rpms/wxGTK3.git/plain/wxGTK3-3.0.2-fix-percent-dnd.patch
-	http://pkgs.fedoraproject.org/cgit/rpms/wxGTK3.git/plain/wxGTK3-3.0.2-fix-percent-dnd2.patch
-	http://pkgs.fedoraproject.org/cgit/rpms/wxGTK3.git/plain/wxGTK3-3.0.2-scrolwin-sizing-loop.patch
-	http://pkgs.fedoraproject.org/cgit/rpms/wxGTK3.git/plain/wxGTK3-3.0.2-gtk-sizing-problems.patch?h=f25
-	http://pkgs.fedoraproject.org/cgit/rpms/wxGTK3.git/plain/wxGTK3-3.0.2-background-color.patch?h=f25
-	http://pkgs.fedoraproject.org/cgit/rpms/wxGTK3.git/plain/wxGTK3-3.0.2-paint-clipping-region.patch?h=f25
-	http://pkgs.fedoraproject.org/cgit/rpms/wxGTK3.git/plain/wxGTK3-3.0.2-wxpgchoicesdata-protected-destructor.patch?h=f25
-	http://pkgs.fedoraproject.org/cgit/rpms/wxGTK3.git/plain/wxGTK3-3.0.2-check-radio-button-rendering.patch?h=f25
-	http://pkgs.fedoraproject.org/cgit/rpms/wxGTK3.git/plain/wxGTK3-3.0.2-blank-menubar-toolbar.patch?h=f25
-	http://pkgs.fedoraproject.org/cgit/rpms/wxPython.git/plain/fix-editra-removal.patch
-	http://pkgs.fedoraproject.org/cgit/rpms/wxPython.git/plain/wxPython-3.0.0.0-format.patch
-	http://pkgs.fedoraproject.org/cgit/rpms/wxPython.git/plain/wxPython-3.0.2.0-getxwindowcrash.patch
-	http://pkgs.fedoraproject.org/cgit/rpms/wxPython.git/plain/wxPython-3.0.2.0-plot.patch
-	http://pkgs.fedoraproject.org/cgit/rpms/wxPython.git/plain/wxPython-3.0.2.0-listctrl-mixin-edit.patch
-	http://pkgs.fedoraproject.org/cgit/rpms/wxPython.git/plain/wxPython-3.0.2.0-webview-optional.patch
+	http://pkgs.fedoraproject.org/cgit/rpms/wxGTK3.git/plain/wxGTK3-3.0.3-abicheck.patch
 	mirror://portage/x11-libs/wxGTK/files/wxGTK-3.0.0.0-collision.patch
 	3.0.2-cygwin-auto-import.patch
 	3.0.2-cygwin-dlopen.patch
 	3.0.2-cygwin-unix.patch
 	3.0.2-cygwin-gcc5.patch
-	3.0.2-python-build.patch
-	3.0.2-gstreamer1.patch
+	3.0.3-autoreconf.patch
+	3.0.3-cygwin-ftm.patch
 "
-
-DISTCLEANFILES="wxPython/build_options.py"
 
 slot=${PV_MAJ_MIN}
 
 PKG_NAMES="libwx_baseu3.0_0 libwx_baseu3.0-devel ${NAME}-doc
            libwx_gtk2u3.0_0 libwx_gtk2u3.0-devel
-           libwx_gtk3u3.0_0 libwx_gtk3u3.0-devel
-           python2-wx python2-wxversion"
+           libwx_gtk3u3.0_0 libwx_gtk3u3.0-devel"
 libwx_baseu3_0_0_SUMMARY="${SUMMARY} (base unicode runtime)"
 libwx_baseu3_0_0_CONTENTS="
 	--exclude=html
@@ -99,41 +68,11 @@ wxWidgets3_0_doc_CATEGORY="Doc"
 wxWidgets3_0_doc_SUMMARY="${SUMMARY} (documentation)"
 wxWidgets3_0_doc_OBSOLETES="libwx_gtk2u3.0-doc"
 wxWidgets3_0_doc_CONTENTS="usr/share/doc/${NAME}/html/"
-python2_wx_OBSOLETES="python-wx3.0 python-wx-tools"
-python2_wx_REQUIRES="python2-wxversion"
-python2_wx_SUMMARY="${SUMMARY} (Python bindings)"
-python2_wx_CONTENTS="
-	etc/
-	usr/bin/helpviewer
-	usr/bin/img2*
-	usr/bin/py*
-	usr/bin/xrced
-	${PYTHON2_SITELIB#/}/wx-${slot}-gtk3/
-	${PYTHON2_SITELIB#/}/wxPython_common-${VERSION}-*.egg-info
-	usr/share/applications/
-	usr/share/icons/
-"
-python2_wxversion_OBSOLETES="python-wxversion"
-python2_wxversion_SUMMARY="${SUMMARY} (Python bindings)"
-python2_wxversion_CONTENTS="
-	${PYTHON2_SITELIB#/}/wx.pth
-	${PYTHON2_SITELIB#/}/wxversion.*
-"
 
-DIFF_EXCLUDES="configure swigver.h wx.pth *_wrap.cpp"
+DIFF_EXCLUDES="doxygen.log out"
 
 CFLAGS+=" -fno-strict-aliasing"
 CXXFLAGS+=" -fno-strict-aliasing"
-MAKEOPTS+=" -j1"
-
-CYGPORT_USE_UNSTABLE_API=1
-src_unpack_hook() {
-	ln -sf wxPython b
-}
-
-src_patch_hook() {
-	rm -f b
-}
 
 src_compile() {
 	local myconf
@@ -144,7 +83,7 @@ src_compile() {
 
 	cd ${S}/locale
 	rm -f *.mo
-	cygmake allmo
+	cygmake allmo -j1
 
 	mkdir -p ${B}/base
 	cd ${B}/base
@@ -219,17 +158,9 @@ src_compile() {
 
 	cygmake
 
-	mkdir -p ${B}/wxPython
-	lndirs ${S}/wxPython ${B}/wxPython
-
-	cd ${B}/wxPython
-
-	export WXWIN=${S}
-
-	python2_distutils_compile \
-		WXPORT=gtk3 \
-		WX_CONFIG=${B}/gtk3/lib/wx/config/inplace-gtk3-unicode-${slot} \
-		SYS_WX_CONFIG=/usr/lib/wx/config/gtk3-unicode-${slot}
+	pushd ${S}/docs/doxygen
+	WX_SKIP_DOXYGEN_VERSION_CHECK=1 ./regen.sh html
+	popd
 }
 
 src_test() {
@@ -240,34 +171,14 @@ src_test() {
 }
 
 src_install() {
-	cd ${B}/wxPython
-
-	export WXWIN=${S}
-
-	python2_distutils_install \
-		WXPORT=gtk3 \
-		WX_CONFIG=${B}/gtk3/lib/wx/config/gtk3-unicode-${slot} \
-		SYS_WX_CONFIG=/usr/lib/wx/config/gtk3-unicode-${slot}
-
-	for i in 16 32
-	do
-		insinto /usr/share/icons/hicolor/${i}x${i}/apps
-		newins ${S}/wxPython/wx/py/PyCrust_${i}.png PyCrust.png
-		newins ${S}/wxPython/wx/tools/XRCed/XRCed_${i}.png XRCed.png
-	done
-	make_desktop_entry pyalacarte PyAlaCarte  PyCrust "Development;GTK"
-	make_desktop_entry pyalamode  PyAlaMode   PyCrust "Development;GTK"
-	make_desktop_entry pycrust    PyCrust     PyCrust "Development;GTK"
-	make_desktop_entry pyshell    PyShell     PyCrust "Development;GTK"
-	make_desktop_entry xrced      XRCed       XRCed   "Development;GTK"
-
+	dodir /usr/lib
 	cd ${B}/base
 	cp -fr lib/wx/ ${D}/usr/lib/
 	cd ${B}/gtk2
-	cyginstall
+	cyginstall -j1
 	cp -fr lib/lib*.dll.a lib/wx/ ${D}/usr/lib/
 	cd ${B}/gtk3
-	cyginstall
+	cyginstall -j1
 	cp -fr lib/lib*.dll.a lib/wx/ ${D}/usr/lib/
 
 	rm -f ${D}/usr/lib/wx/config/inplace-*
