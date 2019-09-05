@@ -1,5 +1,5 @@
 NAME="wxWidgets3.0"
-VERSION=3.0.3
+VERSION=3.0.4
 RELEASE=1
 CATEGORY="Libs"
 SUMMARY="wxWidgets C++ application framework"
@@ -13,8 +13,8 @@ HOMEPAGE="http://wxwidgets.org/"
 SRC_URI="https://github.com/wxWidgets/wxWidgets/releases/download/v${VERSION}/wxWidgets-${VERSION}.tar.bz2"
 SRC_DIR="wxWidgets-${VERSION}"
 PATCH_URI="
-	http://pkgs.fedoraproject.org/cgit/rpms/wxGTK3.git/plain/wxGTK3-3.0.3-abicheck.patch
-	mirror://portage/x11-libs/wxGTK/files/wxGTK-3.0.0.0-collision.patch
+	https://src.fedoraproject.org/rpms/wxGTK3/raw/master/f/wxGTK3-3.0.3-abicheck.patch
+	mirror://portage/x11-libs/wxGTK/files/wxGTK-3.0.3-collision.patch
 	3.0.2-cygwin-auto-import.patch
 	3.0.2-cygwin-dlopen.patch
 	3.0.2-cygwin-unix.patch
