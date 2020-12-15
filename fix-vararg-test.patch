@@ -1,0 +1,31 @@
+From be5d3b5bca0eca2b7db75037ae21bb002d50c60b Mon Sep 17 00:00:00 2001
+From: Lauri Nurmi <lanurmi@iki.fi>
+Date: Thu, 16 Jun 2016 01:05:06 +0300
+Subject: [PATCH] Fix unit test when char is unsigned by default
+
+Skip test relying on char being signed if it isn't by default, as is the case
+with gcc on some ARM platforms, for example.
+
+Closes https://github.com/wxWidgets/wxWidgets/pull/299
+---
+ tests/strings/vararg.cpp | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/tests/strings/vararg.cpp b/tests/strings/vararg.cpp
+index 0e3cc84ac9..9c93652b9f 100644
+--- a/tests/strings/vararg.cpp
++++ b/tests/strings/vararg.cpp
+@@ -132,8 +132,10 @@ void VarArgTestCase::CharPrintf()
+         #pragma warning(default:4305) // truncation of constant value in VC6
+         #pragma warning(default:4309)
+     #endif
++    #ifndef __CHAR_UNSIGNED__
+     s.Printf("value is %i (int)", c);
+     CPPUNIT_ASSERT_EQUAL( wxString("value is -16 (int)"), s );
++    #endif
+ 
+     unsigned char u = 240;
+     s.Printf("value is %i (int)", u);
+-- 
+2.19.1
+

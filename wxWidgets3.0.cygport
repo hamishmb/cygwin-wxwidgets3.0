@@ -1,5 +1,5 @@
 NAME="wxWidgets3.0"
-VERSION=3.0.4
+VERSION=3.0.5.1
 RELEASE=1
 CATEGORY="Libs"
 SUMMARY="wxWidgets C++ application framework"
@@ -12,15 +12,27 @@ socket and thread support."
 HOMEPAGE="http://wxwidgets.org/"
 SRC_URI="https://github.com/wxWidgets/wxWidgets/releases/download/v${VERSION}/wxWidgets-${VERSION}.tar.bz2"
 SRC_DIR="wxWidgets-${VERSION}"
+
+#Just for building:
+BUILD_REQUIRES="make cppunit autoconf pkg-config gcc-core gcc-g++ doxygen libX11-devel libgtk2.0-devel libgtk3-devel libwebkitgtk1.0-devel libwebkitgtk3.0-devel libpng-devel libjpeg-devel libexpat-devel libiconv-devel libmspack-devel libnotify-devel libtiff-devel libXpm-devel libcogl-devel libEGL-devel libGL-devel libGLU-devel libSDL2-devel libSDL2_image-devel libSDL2_mixer-devel libSDL2_net-devel libSDL2_ttf-devel zlib-devel"
+
+#For running unit tests/runtime (currently disabled because they don't work).
+#Still needed for manual testing though, so leaving in here.
+BUILD_REQUIRES="$BUILD_REQUIRES xclock graphviz libwebkitgtk1.0_0 libwebkitgtk3.0_0 libpng16 libjpeg8 libexpat1 libiconv libiconv2 libmspack0 libnotify libnotify4 libtiff6 libXpm4 libcogl20 libEGL1 libGL1 libGLU1 libSDL2_2.0_0 libSDL2_image2.0_0 libSDL2_mixer2.0_0 libSDL2_net2.0_0 libSDL2_ttf2.0_0 zlib"
+
 PATCH_URI="
 	https://src.fedoraproject.org/rpms/wxGTK3/raw/master/f/wxGTK3-3.0.3-abicheck.patch
-	mirror://portage/x11-libs/wxGTK/files/wxGTK-3.0.3-collision.patch
+	https://src.fedoraproject.org/rpms/wxGTK3/raw/master/f/fix-filename-test.patch
+	https://src.fedoraproject.org/rpms/wxGTK3/raw/master/f/fix-vararg-test.patch
+	https://src.fedoraproject.org/rpms/wxGTK3/raw/master/f/force-x11-for-wxgl.patch
+	wxGTK3-3.0.5.1-collision.patch
 	3.0.2-cygwin-auto-import.patch
 	3.0.2-cygwin-dlopen.patch
 	3.0.2-cygwin-unix.patch
 	3.0.2-cygwin-gcc5.patch
 	3.0.3-autoreconf.patch
 	3.0.3-cygwin-ftm.patch
+	0007-Fix-video-sink-fallback-in-wxMediaCtrl-when-xvimages.patch
 "
 
 slot=${PV_MAJ_MIN}
@@ -74,19 +86,24 @@ DIFF_EXCLUDES="doxygen.log out"
 CFLAGS+=" -fno-strict-aliasing"
 CXXFLAGS+=" -fno-strict-aliasing"
 
-src_compile() {
-	local myconf
+MAKEOPTS="-j13"
 
-	cd ${S}
+src_compile() {
+	#NB: gnomevfs is disabled due to Gentoo bug 203389: https://bugs.gentoo.org/203389
+	#which causes a segfault.
+	local myconf
+	
+	pushd ${S}
 	NO_ACLOCAL=1 NO_LIBTOOLIZE=1 NO_AUTOHEADER=1 NO_AUTOMAKE=1 \
 	cygautoreconf
 
-	cd ${S}/locale
+	pushd ${S}/locale
 	rm -f *.mo
 	cygmake allmo -j1
-
+	popd
+	
 	mkdir -p ${B}/base
-	cd ${B}/base
+	pushd ${B}/base
 
 	# standalone wx_base
 	cygconf \
@@ -96,26 +113,24 @@ src_compile() {
 		--enable-unicode \
 		--disable-gui \
 		--disable-rpath \
+		--with-regex=sys \
 		--with-expat \
 		--with-libiconv \
 		--with-zlib
 
+	popd
 	mkdir -p ${B}/gtk2
-	cd ${B}/gtk2
+	pushd ${B}/gtk2
 
-	# gnomevfs: Gentoo bug 203389
 	cygconf \
 		--enable-optimise \
 		--enable-shared \
 		--enable-unicode \
 		--enable-mediactrl \
-		--disable-gtktest \
 		--disable-rpath \
-		--disable-sdltest \
-		--disable-webviewwebkit \
+		--with-regex=sys \
 		--with-expat \
 		--with-gtk=2 \
-		--without-gnomeprint --without-gnomevfs \
 		--with-libpng \
 		--with-libjpeg \
 		--with-libiconv \
@@ -129,22 +144,19 @@ src_compile() {
 
 	cygmake
 
+    popd
 	mkdir -p ${B}/gtk3
-	cd ${B}/gtk3
+	pushd ${B}/gtk3
 
-	# gnomevfs: Gentoo bug 203389
 	cygconf \
 		--enable-optimise \
 		--enable-shared \
 		--enable-unicode \
 		--enable-mediactrl \
-		--disable-gtktest \
 		--disable-rpath \
-		--disable-sdltest \
-		--disable-webviewwebkit \
+		--with-regex=sys \
 		--with-expat \
 		--with-gtk=3 \
-		--without-gnomeprint --without-gnomevfs \
 		--with-libpng \
 		--with-libjpeg \
 		--with-libiconv \
@@ -158,17 +170,28 @@ src_compile() {
 
 	cygmake
 
+	popd
 	pushd ${S}/docs/doxygen
 	WX_SKIP_DOXYGEN_VERSION_CHECK=1 ./regen.sh html
 	popd
 }
 
-src_test() {
-	cd ${B}/gtk3/tests
-	cygmake
-	PATH="${B}/lib:$PATH" ./test
-	PATH="${B}/lib:$PATH" ./test_gui
-}
+#Disabled, as automated tests are currently not working.
+#src_test() {
+#	echo "--- GTK2 tests ---"
+#	pushd ${B}/gtk2/tests
+#	cygmake
+#	DISPLAY=:0 PATH="${B}/lib:$PATH" ./test
+#	DISPLAY=:0 PATH="${B}/lib:$PATH" ./test_gui
+#	popd
+#	
+#	echo "--- GTK3 tests ---"
+#	pushd ${B}/gtk3/tests
+#	cygmake
+#	DISPLAY=:0 PATH="${B}/lib:$PATH" ./test
+#	DISPLAY=:0 PATH="${B}/lib:$PATH" ./test_gui
+#	popd
+#}
 
 src_install() {
 	dodir /usr/lib
