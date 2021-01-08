@@ -14,7 +14,7 @@ SRC_URI="https://github.com/wxWidgets/wxWidgets/releases/download/v${VERSION}/wx
 SRC_DIR="wxWidgets-${VERSION}"
 
 #Just for building:
-BUILD_REQUIRES="make cppunit autoconf pkg-config gcc-core gcc-g++ doxygen libX11-devel libgtk2.0-devel libgtk3-devel libwebkitgtk1.0-devel libwebkitgtk3.0-devel libpng-devel libjpeg-devel libexpat-devel libiconv-devel libmspack-devel libnotify-devel libtiff-devel libXpm-devel libcogl-devel libEGL-devel libGL-devel libGLU-devel libSDL2-devel libSDL2_image-devel libSDL2_mixer-devel libSDL2_net-devel libSDL2_ttf-devel zlib-devel"
+BUILD_REQUIRES="make cppunit autoconf pkg-config gcc-core gcc-g++ doxygen libX11-devel libgtk2.0-devel libgtk3-devel libwebkitgtk1.0-devel libwebkitgtk3.0-devel libpng-devel libjpeg-devel libexpat-devel libiconv-devel libmspack-devel libnotify-devel libtiff-devel libXpm-devel libcogl-devel libEGL-devel libGL-devel libGLU-devel libSDL2-devel libSDL2_image-devel libSDL2_mixer-devel libSDL2_net-devel libSDL2_ttf-devel gstreamer1.0-plugins-base gstreamer1.0 libgstreamer1.0_0 libgstreamer1.0-devel libgstinterfaces1.0-devel libgstinterfaces1.0_0 zlib-devel"
 
 #For running unit tests/runtime (currently disabled because they don't work).
 #Still needed for manual testing though, so leaving in here.
