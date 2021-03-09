@@ -113,7 +113,6 @@ src_compile() {
 		--enable-unicode \
 		--disable-gui \
 		--disable-rpath \
-		--with-regex=sys \
 		--with-expat \
 		--with-libiconv \
 		--with-zlib
@@ -128,7 +127,6 @@ src_compile() {
 		--enable-unicode \
 		--enable-mediactrl \
 		--disable-rpath \
-		--with-regex=sys \
 		--with-expat \
 		--with-gtk=2 \
 		--with-libpng \
@@ -154,7 +152,6 @@ src_compile() {
 		--enable-unicode \
 		--enable-mediactrl \
 		--disable-rpath \
-		--with-regex=sys \
 		--with-expat \
 		--with-gtk=3 \
 		--with-libpng \
